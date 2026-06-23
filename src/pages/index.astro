@@ -192,6 +192,17 @@ const items: Item[] = [
 .sw-15 input:checked + .track .thumb { transform: translateX(32px); }` },
   { cls: 'sw-16', family: 'switch', name: 'Power', on: true, css: `.sw-16 .thumb::after { content: "\\23FB"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; color: color-mix(in srgb, var(--secondary) 55%, var(--surface)); }
 .sw-16 input:checked + .track .thumb::after { color: var(--on); }` },
+  { cls: 'sw-17', family: 'switch', name: 'Stretch', on: true, css: `/* Thumb squashes wide while pressed, then snaps back — squash & stretch. */
+.sw-17 .thumb { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), width 0.2s ease, background 0.3s ease; }
+.sw-17 .track:active .thumb { width: 32px; }
+.sw-17 input:checked + .track:active .thumb { transform: translateX(14px); }` },
+  { cls: 'sw-18', family: 'switch', name: 'Spring', on: true, css: `/* Thumb overshoots past the end, then settles back — springy bounce. */
+.sw-18 input:checked + .track .thumb { animation: sw18-spring 0.45s cubic-bezier(0.5, 1.6, 0.4, 1); }
+@keyframes sw18-spring {
+  0% { transform: translateX(0); }
+  55% { transform: translateX(30px); }
+  100% { transform: translateX(24px); }
+}` },
 
   // ---------- Checkboxes ----------
   { cls: 'ck-1', family: 'check', name: 'Checkmark', on: true, css: `/* Checkmark — uses the base styles as-is */` },
@@ -217,6 +228,19 @@ const items: Item[] = [
 .ck-7 input:checked + .box::before { transform: translateY(0); }` },
   { cls: 'ck-8', family: 'check', name: 'Ghost', css: `.ck-8 { --mark: var(--secondary); }
 .ck-8 input:checked + .box { background: transparent; border-color: var(--secondary); }` },
+  { cls: 'ck-9', family: 'check', name: 'Pop', on: true, css: `/* Box squashes then pops back as it fills. */
+.ck-9 input:checked + .box { background: var(--on); border-color: var(--on); animation: ck9-pop 0.35s ease; }
+@keyframes ck9-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(0.82); }
+  100% { transform: scale(1); }
+}` },
+  { cls: 'ck-10', family: 'check', name: 'Spin', on: true, css: `/* Box spins a full turn as the checkmark lands. */
+.ck-10 input:checked + .box { animation: ck10-spin 0.5s cubic-bezier(0.22, 1, 0.36, 1); }
+@keyframes ck10-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}` },
 
   // ---------- Radios (toggleable) ----------
   { cls: 'rd-1', family: 'radio', name: 'Classic Dot', on: true, css: `/* Classic dot — uses the base styles as-is */` },
@@ -230,6 +254,20 @@ const items: Item[] = [
 .rd-5 input:checked + .dot { border-color: var(--primary); box-shadow: 0 0 8px color-mix(in srgb, var(--primary) 70%, transparent); }` },
   { cls: 'rd-6', family: 'radio', name: 'Square', css: `.rd-6 .dot { border-radius: 7px; }
 .rd-6 .dot::after { border-radius: 3px; }` },
+  { cls: 'rd-7', family: 'radio', name: 'Pulse', on: true, css: `/* A ring ripples outward each time it's selected. */
+.rd-7 .dot::before { content: ""; position: absolute; inset: 0; border-radius: 50%; border: 2px solid var(--on); opacity: 0; }
+.rd-7 input:checked + .dot::before { animation: rd7-pulse 0.6s ease-out; }
+@keyframes rd7-pulse {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.9); opacity: 0; }
+}` },
+  { cls: 'rd-8', family: 'radio', name: 'Bounce', on: true, css: `/* Inner dot overshoots then settles — a bouncy pop-in. */
+.rd-8 input:checked + .dot::after { animation: rd8-bounce 0.4s cubic-bezier(0.5, 1.6, 0.4, 1); }
+@keyframes rd8-bounce {
+  0% { transform: scale(0); }
+  60% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}` },
 ];
 
 function markup(item: Item): string {

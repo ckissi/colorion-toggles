@@ -1,6 +1,6 @@
 # CSS Toggle Library
 
-A library of **30 pure-CSS toggles** — switches, checkboxes and radios — with no JavaScript and no dependencies. Click any toggle to view and copy its self-contained CSS, or grab a ready-made prompt to have your coding agent recreate it.
+A library of **36 pure-CSS toggles** — switches, checkboxes and radios — with no JavaScript and no dependencies. Click any toggle to view and copy its self-contained CSS, or grab a ready-made prompt to have your coding agent recreate it.
 
 🔗 **Live site:** [toggles.colorion.co](https://toggles.colorion.co)
 
@@ -16,9 +16,9 @@ A library of **30 pure-CSS toggles** — switches, checkboxes and radios — wit
 
 | Family | Count |
 | --- | --- |
-| Switches / toggles | 16 |
-| Checkboxes | 8 |
-| Radios (toggleable) | 6 |
+| Switches / toggles | 18 |
+| Checkboxes | 10 |
+| Radios (toggleable) | 8 |
 
 ## Getting started
 
