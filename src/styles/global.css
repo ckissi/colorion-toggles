@@ -207,6 +207,10 @@ body {
   .header-status { display: none; }
 }
 
+@media (max-width: 900px) {
+  h1, .hero p { max-width: 100%; }
+}
+
 /* ---------- Hero ---------- */
 .hero {
   max-width: 1200px;
@@ -230,7 +234,7 @@ h1 {
   font-weight: 500;
   line-height: 1.04;
   letter-spacing: 0;
-  max-width: 14ch;
+  max-width: 66.6667%;
   animation: reveal .8s cubic-bezier(.22,1,.36,1) both;
 }
 
@@ -245,7 +249,7 @@ h1 em {
 
 .hero p {
   margin-top: calc(var(--base) * 3);
-  max-width: 52ch;
+  max-width: 66.6667%;
   color: color-mix(in srgb, var(--secondary) 70%, var(--surface));
   animation: reveal .8s .12s cubic-bezier(.22,1,.36,1) both;
 }
