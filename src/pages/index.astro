@@ -1,0 +1,481 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// Each family has a self-contained base (theme tokens defined locally so copied
+// snippets work standalone), then per-item rules layer the variation on top.
+
+const SWITCH_BASE = `.switch {
+  /* Theme tokens — override these to recolour the switch */
+  --primary: #F4FF2B;
+  --secondary: #0F191E;
+  --surface: #E2F1F2;
+  --on: var(--secondary);                                       /* track when ON  */
+  --off: color-mix(in srgb, var(--secondary) 22%, var(--surface)); /* track when OFF */
+  --thumb: var(--surface);
+  position: relative;
+  display: inline-flex;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+.switch .track {
+  position: relative;
+  width: 52px; height: 28px;
+  border-radius: 9999px;
+  background: var(--off);
+  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.switch .thumb {
+  position: absolute;
+  top: 3px; left: 3px;
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--thumb);
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1), background 0.3s ease, box-shadow 0.3s ease;
+}
+.switch input:checked + .track { background: var(--on); }
+.switch input:checked + .track .thumb { transform: translateX(24px); }
+.switch input:focus-visible + .track { outline: 2px solid var(--primary); outline-offset: 2px; }`;
+
+const CHECK_BASE = `.check {
+  /* Theme tokens — override these to recolour the checkbox */
+  --primary: #F4FF2B;
+  --secondary: #0F191E;
+  --surface: #E2F1F2;
+  --on: var(--secondary);
+  --mark: var(--surface);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--secondary);
+  -webkit-tap-highlight-color: transparent;
+}
+.check input { position: absolute; opacity: 0; width: 0; height: 0; }
+.check .box {
+  position: relative;
+  width: 22px; height: 22px; flex: none;
+  border: 2px solid color-mix(in srgb, var(--secondary) 45%, var(--surface));
+  border-radius: 6px;
+  background: transparent;
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+.check .box::after {
+  content: "";
+  position: absolute; left: 6px; top: 2px;
+  width: 6px; height: 11px;
+  border: solid var(--mark);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transform-origin: center;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.check input:checked + .box { background: var(--on); border-color: var(--on); }
+.check input:checked + .box::after { transform: rotate(45deg) scale(1); }
+.check input:focus-visible + .box { outline: 2px solid var(--primary); outline-offset: 2px; }`;
+
+const RADIO_BASE = `.radio {
+  /* Theme tokens — override these to recolour the radio.
+     Uses a checkbox input so it toggles on/off without a group. */
+  --primary: #F4FF2B;
+  --secondary: #0F191E;
+  --surface: #E2F1F2;
+  --on: var(--secondary);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--secondary);
+  -webkit-tap-highlight-color: transparent;
+}
+.radio input { position: absolute; opacity: 0; width: 0; height: 0; }
+.radio .dot {
+  position: relative;
+  width: 22px; height: 22px; flex: none;
+  border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--secondary) 45%, var(--surface));
+  background: transparent;
+  transition: border-color 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+.radio .dot::after {
+  content: "";
+  position: absolute; inset: 4px;
+  border-radius: 50%;
+  background: var(--on);
+  transform: scale(0);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.radio input:checked + .dot { border-color: var(--on); }
+.radio input:checked + .dot::after { transform: scale(1); }
+.radio input:focus-visible + .dot { outline: 2px solid var(--primary); outline-offset: 2px; }`;
+
+const BASES: Record<string, string> = {
+  switch: SWITCH_BASE,
+  check: CHECK_BASE,
+  radio: RADIO_BASE,
+};
+
+type Family = 'switch' | 'check' | 'radio';
+interface Item { cls: string; family: Family; name: string; on?: boolean; css: string; }
+
+const items: Item[] = [
+  // ---------- Switches ----------
+  { cls: 'sw-1', family: 'switch', name: 'Classic Pill', css: `/* Classic pill — uses the base styles as-is */` },
+  { cls: 'sw-2', family: 'switch', name: 'Accent', on: true, css: `.sw-2 input:checked + .track { background: var(--primary); }
+.sw-2 input:checked + .track .thumb { background: var(--secondary); }` },
+  { cls: 'sw-3', family: 'switch', name: 'Square', css: `.sw-3 .track { border-radius: 7px; }
+.sw-3 .thumb { border-radius: 5px; }` },
+  { cls: 'sw-4', family: 'switch', name: 'Outline', css: `.sw-4 .track { background: transparent; box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--secondary) 35%, var(--surface)); }
+.sw-4 .thumb { background: color-mix(in srgb, var(--secondary) 65%, var(--surface)); }
+.sw-4 input:checked + .track { box-shadow: inset 0 0 0 2px var(--secondary); }
+.sw-4 input:checked + .track .thumb { background: var(--secondary); }` },
+  { cls: 'sw-5', family: 'switch', name: 'Check / Cross', on: true, css: `.sw-5 .thumb::after { content: "\\2715"; position: absolute; inset: 0; display: grid; place-items: center; font: 700 11px/1 "JetBrains Mono", monospace; color: color-mix(in srgb, var(--secondary) 55%, var(--surface)); }
+.sw-5 input:checked + .track .thumb::after { content: "\\2713"; color: var(--on); }` },
+  { cls: 'sw-6', family: 'switch', name: 'On / Off', on: true, css: `.sw-6 .track { width: 62px; }
+.sw-6 .track::after { content: "OFF"; position: absolute; top: 0; bottom: 0; right: 9px; display: flex; align-items: center; font: 700 9px/1 "JetBrains Mono", monospace; letter-spacing: 0.12em; color: color-mix(in srgb, var(--secondary) 55%, var(--surface)); }
+.sw-6 input:checked + .track::after { content: "ON"; right: auto; left: 9px; color: var(--surface); }
+.sw-6 input:checked + .track .thumb { transform: translateX(34px); }` },
+  { cls: 'sw-7', family: 'switch', name: 'Sun / Moon', on: true, css: `.sw-7 .track { background: color-mix(in srgb, #7fb0d6 70%, var(--surface)); }
+.sw-7 .thumb { background: #f5d76e; }
+.sw-7 .thumb::after { content: "\\2600"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; color: #9a6b00; }
+.sw-7 input:checked + .track { background: var(--secondary); }
+.sw-7 input:checked + .track .thumb { background: var(--surface); }
+.sw-7 input:checked + .track .thumb::after { content: "\\263E"; color: var(--secondary); }` },
+  { cls: 'sw-8', family: 'switch', name: 'Glow', on: true, css: `.sw-8 input:checked + .track { background: var(--primary); box-shadow: 0 0 12px color-mix(in srgb, var(--primary) 75%, transparent); }
+.sw-8 input:checked + .track .thumb { background: var(--secondary); }` },
+  { cls: 'sw-9', family: 'switch', name: 'Neon', on: true, css: `.sw-9 .track { background: var(--secondary); }
+.sw-9 .thumb { background: color-mix(in srgb, var(--surface) 70%, var(--secondary)); }
+.sw-9 input:checked + .track { background: var(--secondary); box-shadow: inset 0 0 0 2px var(--primary), 0 0 10px color-mix(in srgb, var(--primary) 70%, transparent); }
+.sw-9 input:checked + .track .thumb { background: var(--primary); box-shadow: 0 0 8px color-mix(in srgb, var(--primary) 80%, transparent); }` },
+  { cls: 'sw-10', family: 'switch', name: 'Brutalist', css: `.sw-10 .track { background: var(--surface); border: 2px solid var(--secondary); box-shadow: 3px 3px 0 var(--secondary); }
+.sw-10 .thumb { top: 1px; left: 1px; background: var(--secondary); }
+.sw-10 input:checked + .track { background: var(--primary); }` },
+  { cls: 'sw-11', family: 'switch', name: 'Neumorphic', css: `.sw-11 .track { background: var(--surface); box-shadow: inset 2px 2px 4px color-mix(in srgb, var(--secondary) 22%, transparent), inset -2px -2px 4px #ffffff; }
+.sw-11 .thumb { background: var(--surface); box-shadow: 1px 1px 2px color-mix(in srgb, var(--secondary) 30%, transparent), -1px -1px 2px #ffffff; }
+.sw-11 input:checked + .track .thumb { background: var(--primary); }` },
+  { cls: 'sw-12', family: 'switch', name: 'Gradient', on: true, css: `.sw-12 input:checked + .track { background: linear-gradient(90deg, var(--primary), color-mix(in srgb, var(--primary) 40%, var(--secondary))); }
+.sw-12 input:checked + .track .thumb { background: var(--secondary); }` },
+  { cls: 'sw-13', family: 'switch', name: 'Dashed', css: `.sw-13 .track { background: transparent; border: 2px dashed color-mix(in srgb, var(--secondary) 40%, var(--surface)); }
+.sw-13 .thumb { top: 1px; left: 1px; background: color-mix(in srgb, var(--secondary) 70%, var(--surface)); }
+.sw-13 input:checked + .track { background: transparent; border-color: var(--secondary); border-style: solid; }
+.sw-13 input:checked + .track .thumb { background: var(--secondary); }` },
+  { cls: 'sw-14', family: 'switch', name: 'Mini', css: `.sw-14 .track { width: 36px; height: 20px; }
+.sw-14 .thumb { width: 14px; height: 14px; }
+.sw-14 input:checked + .track .thumb { transform: translateX(16px); }` },
+  { cls: 'sw-15', family: 'switch', name: 'Large', css: `.sw-15 .track { width: 68px; height: 36px; }
+.sw-15 .thumb { width: 30px; height: 30px; }
+.sw-15 input:checked + .track .thumb { transform: translateX(32px); }` },
+  { cls: 'sw-16', family: 'switch', name: 'Power', on: true, css: `.sw-16 .thumb::after { content: "\\23FB"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 12px; color: color-mix(in srgb, var(--secondary) 55%, var(--surface)); }
+.sw-16 input:checked + .track .thumb::after { color: var(--on); }` },
+
+  // ---------- Checkboxes ----------
+  { cls: 'ck-1', family: 'check', name: 'Checkmark', on: true, css: `/* Checkmark — uses the base styles as-is */` },
+  { cls: 'ck-2', family: 'check', name: 'Filled Accent', on: true, css: `.ck-2 { --mark: var(--secondary); }
+.ck-2 input:checked + .box { background: var(--primary); border-color: var(--primary); }` },
+  { cls: 'ck-3', family: 'check', name: 'Rounded', css: `.ck-3 .box { border-radius: 10px; }` },
+  { cls: 'ck-4', family: 'check', name: 'Circle', css: `.ck-4 .box { border-radius: 50%; }
+.ck-4 .box::after { left: 7px; }` },
+  { cls: 'ck-5', family: 'check', name: 'Cross', css: `.ck-5 .box::after { left: 50%; top: 50%; width: 12px; height: 2px; border: none; border-radius: 2px; background: var(--mark); transform: translate(-50%, -50%) rotate(45deg) scale(0); }
+.ck-5 .box::before { content: ""; position: absolute; left: 50%; top: 50%; width: 12px; height: 2px; border-radius: 2px; background: var(--mark); transform: translate(-50%, -50%) rotate(-45deg) scale(0); transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+.ck-5 input:checked + .box::after { transform: translate(-50%, -50%) rotate(45deg) scale(1); }
+.ck-5 input:checked + .box::before { transform: translate(-50%, -50%) rotate(-45deg) scale(1); }` },
+  { cls: 'ck-6', family: 'check', name: 'Bounce', on: true, css: `.ck-6 input:checked + .box::after { animation: ck6-bounce 0.4s ease; }
+@keyframes ck6-bounce {
+  0% { transform: rotate(45deg) scale(0); }
+  60% { transform: rotate(45deg) scale(1.3); }
+  100% { transform: rotate(45deg) scale(1); }
+}` },
+  { cls: 'ck-7', family: 'check', name: 'Fill Up', css: `.ck-7 .box { overflow: hidden; }
+.ck-7 .box::before { content: ""; position: absolute; inset: 0; z-index: 0; background: var(--on); transform: translateY(100%); transition: transform 0.3s ease; }
+.ck-7 .box::after { z-index: 1; }
+.ck-7 input:checked + .box { background: transparent; border-color: var(--on); }
+.ck-7 input:checked + .box::before { transform: translateY(0); }` },
+  { cls: 'ck-8', family: 'check', name: 'Ghost', css: `.ck-8 { --mark: var(--secondary); }
+.ck-8 input:checked + .box { background: transparent; border-color: var(--secondary); }` },
+
+  // ---------- Radios (toggleable) ----------
+  { cls: 'rd-1', family: 'radio', name: 'Classic Dot', on: true, css: `/* Classic dot — uses the base styles as-is */` },
+  { cls: 'rd-2', family: 'radio', name: 'Ring', css: `.rd-2 .dot::after { inset: 3px; background: transparent; border: 3px solid var(--on); }` },
+  { cls: 'rd-3', family: 'radio', name: 'Filled', on: true, css: `.rd-3 input:checked + .dot { background: var(--primary); border-color: var(--primary); }
+.rd-3 .dot::after { background: var(--secondary); inset: 6px; }` },
+  { cls: 'rd-4', family: 'radio', name: 'Target', css: `.rd-4 .dot::after { inset: 8px; }
+.rd-4 .dot::before { content: ""; position: absolute; inset: 5px; border-radius: 50%; border: 2px solid var(--on); opacity: 0; transition: opacity 0.25s ease; }
+.rd-4 input:checked + .dot::before { opacity: 1; }` },
+  { cls: 'rd-5', family: 'radio', name: 'Glow', on: true, css: `.rd-5 .dot::after { background: var(--primary); }
+.rd-5 input:checked + .dot { border-color: var(--primary); box-shadow: 0 0 8px color-mix(in srgb, var(--primary) 70%, transparent); }` },
+  { cls: 'rd-6', family: 'radio', name: 'Square', css: `.rd-6 .dot { border-radius: 7px; }
+.rd-6 .dot::after { border-radius: 3px; }` },
+];
+
+function markup(item: Item): string {
+  const chk = item.on ? ' checked' : '';
+  if (item.family === 'switch') {
+    return `<label class="switch ${item.cls}"><input type="checkbox" tabindex="-1"${chk}><span class="track"><span class="thumb"></span></span></label>`;
+  }
+  if (item.family === 'check') {
+    return `<label class="check ${item.cls}"><input type="checkbox" tabindex="-1"${chk}><span class="box"></span><span class="lbl">Label</span></label>`;
+  }
+  return `<label class="radio ${item.cls}"><input type="checkbox" tabindex="-1"${chk}><span class="dot"></span><span class="lbl">Label</span></label>`;
+}
+
+// All CSS for the live page — each family base once, then every item's rules.
+const liveCss = `${SWITCH_BASE}\n\n${CHECK_BASE}\n\n${RADIO_BASE}\n\n${items
+  .map((i) => i.css)
+  .join('\n\n')}
+/* Respect reduced-motion: drop transitions and keyframe animations */
+@media (prefers-reduced-motion: reduce) {
+  .switch *, .check *, .radio * { transition-duration: 0.01ms !important; animation: none !important; }
+}`;
+
+const FAMILY_LABEL: Record<Family, string> = {
+  switch: 'switch / toggle',
+  check: 'checkbox',
+  radio: 'radio (toggleable)',
+};
+
+// Per-toggle copyable snippet: markup as a leading comment, then the family base
+// (with its theme tokens) and the toggle's own rules — fully self-contained.
+const snippets: Record<string, string> = {};
+// Per-toggle LLM prompt: a self-contained instruction a coding agent can paste
+// to recreate the exact same toggle (markup + family base + variation rules).
+const prompts: Record<string, string> = {};
+for (const item of items) {
+  snippets[item.cls] = `/* Markup:\n${markup(item)}\n*/\n\n${BASES[item.family]}\n\n${item.css}`;
+  prompts[item.cls] = `Recreate this toggle exactly, using pure CSS only — no JavaScript, no external libraries, no dependencies.
+
+It is a "${item.name}" ${FAMILY_LABEL[item.family]}: an interactive control whose appearance and checked/unchecked states must match the CSS below precisely (same shapes, transitions, timing curves, and colours).
+
+Use this exact HTML markup:
+
+${markup(item)}
+
+Apply this CSS. The \`.${item.family}\` rules are the shared base every ${item.family} starts from; the \`.${item.cls}\` rules layer on the "${item.name}" variation:
+
+${BASES[item.family]}
+
+${item.css}
+
+Requirements:
+- Keep the markup and class names exactly as shown.
+- The toggle is themed through CSS custom properties (\`--primary\`, \`--secondary\`, \`--surface\`) — preserve them so the colours can be overridden.
+- State is driven entirely by the native \`<input>\` and the \`:checked\` pseudo-class; do not add JavaScript.
+- Respect \`prefers-reduced-motion: reduce\` by disabling animations and using near-instant transitions.`;
+}
+---
+
+<Layout
+  title="CSS Toggle Library — pure-CSS switches, checkboxes & radios, free to copy"
+  description="A library of pure-CSS toggles, switches, checkboxes and radios — no JavaScript, no dependencies. Click any toggle to view and copy its self-contained CSS."
+>
+  <header class="site-header">
+    <div class="brand">
+      <div class="brand-mark">T</div>
+      <span class="mono">CSS Toggle Library</span>
+    </div>
+    <div class="header-status mono">
+      <span class="pulse-dot"></span>
+      {items.length} toggles · MIT
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="hero-tag mono">Pure CSS · Copy &amp; paste</span>
+    <h1>{items.length} <em>CSS toggles</em>,<br />free to copy.</h1>
+    <p>
+      A library of {items.length} switches, checkboxes and radios built with pure
+      CSS — no JavaScript, no dependencies. Copy the self-contained <code>CSS</code>
+      for any toggle, or grab a ready-made <code>Prompt</code> to have your coding
+      agent recreate it. Each snippet defines its own theme tokens and respects
+      <code>prefers-reduced-motion</code>.
+    </p>
+  </section>
+
+  <main class="library">
+    <div class="panel">
+      <div class="library-head">
+        <span class="mono">Click a toggle to copy its CSS</span>
+        <span class="mono">{items.length} toggles</span>
+      </div>
+
+      <div class="grid" id="toggle-grid">
+        {
+          items.map((item, i) => (
+            <article
+              class="cell"
+              role="button"
+              tabindex="0"
+              data-key={item.cls}
+              data-name={item.name}
+              data-index={String(i + 1).padStart(2, '0')}
+              aria-label={`View CSS for ${item.name} toggle`}
+            >
+              <span class="cell-index mono">{String(i + 1).padStart(2, '0')}</span>
+              <div class="cell-actions">
+                <button class="cell-action mono" type="button" data-action="prompt" tabindex="-1" aria-label={`Copy LLM prompt for ${item.name} toggle`}>◳ Prompt</button>
+                <button class="cell-action mono" type="button" data-action="css" tabindex="-1" aria-label={`View CSS for ${item.name} toggle`}>⧉ CSS</button>
+              </div>
+              <div class="stage" set:html={markup(item)} />
+              <h3>{item.name}</h3>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span class="mono">CSS Toggle Library</span>
+    <nav class="footer-links mono">
+      <a href="https://colorion.co?ref=toggles" target="_blank" rel="noopener" referrerpolicy="no-referrer-when-downgrade">Colorion</a>
+      <a href="https://2colors.colorion.co?ref=toggles" target="_blank" rel="noopener" referrerpolicy="no-referrer-when-downgrade">2 Colors</a>
+      <a href="https://animatedbuttons.colorion.co?ref=toggles" target="_blank" rel="noopener" referrerpolicy="no-referrer-when-downgrade">Animated Buttons</a>
+    </nav>
+    <span class="mono">Pure CSS · No dependencies · MIT licensed</span>
+  </footer>
+
+  <!-- Copy-to-clipboard modal -->
+  <div class="modal-overlay" id="css-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <div class="modal-title-group">
+          <span class="modal-index mono" id="modal-index"></span>
+          <h2 class="modal-title mono" id="modal-title"></h2>
+        </div>
+        <button class="modal-close mono" id="modal-close" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-preview">
+        <div class="stage" id="modal-preview"></div>
+      </div>
+      <div class="modal-code-wrap">
+        <pre class="modal-code"><code id="modal-code"></code></pre>
+      </div>
+      <div class="modal-foot">
+        <span class="mono modal-hint" id="modal-hint">Pure CSS · self-contained</span>
+        <button class="modal-copy mono" id="modal-copy">Copy CSS</button>
+      </div>
+    </div>
+  </div>
+
+  <style is:global set:html={liveCss}></style>
+  <script type="application/json" id="toggle-snippets" set:html={JSON.stringify(snippets)}></script>
+  <script type="application/json" id="toggle-prompts" set:html={JSON.stringify(prompts)}></script>
+</Layout>
+
+<script>
+  // ---------- Copy-to-clipboard modal (CSS + LLM prompt modes) ----------
+  type Mode = 'css' | 'prompt';
+
+  const snippets: Record<string, string> = JSON.parse(
+    document.getElementById('toggle-snippets')!.textContent || '{}'
+  );
+  const prompts: Record<string, string> = JSON.parse(
+    document.getElementById('toggle-prompts')!.textContent || '{}'
+  );
+
+  const MODE_CONFIG: Record<Mode, { data: Record<string, string>; copyLabel: string; hint: string }> = {
+    css: { data: snippets, copyLabel: 'Copy CSS', hint: 'Pure CSS · self-contained' },
+    prompt: { data: prompts, copyLabel: 'Copy prompt', hint: 'LLM prompt · paste into your coding agent' },
+  };
+
+  const cells = Array.from(document.querySelectorAll<HTMLElement>('.cell'));
+  const overlay = document.getElementById('css-modal')!;
+  const modalIndex = document.getElementById('modal-index')!;
+  const modalTitle = document.getElementById('modal-title')!;
+  const modalHint = document.getElementById('modal-hint')!;
+  const modalPreview = document.getElementById('modal-preview')!;
+  const modalCode = document.getElementById('modal-code')!;
+  const copyBtn = document.getElementById('modal-copy') as HTMLButtonElement;
+  const closeBtn = document.getElementById('modal-close')!;
+
+  let lastFocused: HTMLElement | null = null;
+  let copyReset: number | undefined;
+  let currentMode: Mode = 'css';
+
+  function openModal(cell: HTMLElement, mode: Mode = 'css') {
+    const key = cell.dataset.key!;
+    const config = MODE_CONFIG[mode];
+    const text = config.data[key];
+    if (!text) return;
+
+    currentMode = mode;
+    modalIndex.textContent = cell.dataset.index || '';
+    modalTitle.textContent = cell.dataset.name || '';
+    modalHint.textContent = config.hint;
+    modalCode.textContent = text;
+
+    // clone the live toggle for the preview
+    const el = cell.querySelector('.stage > *');
+    modalPreview.replaceChildren(el ? el.cloneNode(true) : document.createTextNode(''));
+
+    copyBtn.textContent = config.copyLabel;
+    copyBtn.classList.remove('copied');
+
+    lastFocused = cell;
+    overlay.removeAttribute('hidden');
+    document.body.style.overflow = 'hidden';
+    copyBtn.focus();
+  }
+
+  function closeModal() {
+    overlay.setAttribute('hidden', '');
+    document.body.style.overflow = '';
+    modalPreview.replaceChildren();
+    lastFocused?.focus();
+  }
+
+  async function copyText() {
+    const text = modalCode.textContent || '';
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      // fallback for non-secure contexts
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    copyBtn.textContent = 'Copied ✓';
+    copyBtn.classList.add('copied');
+    window.clearTimeout(copyReset);
+    copyReset = window.setTimeout(() => {
+      copyBtn.textContent = MODE_CONFIG[currentMode].copyLabel;
+      copyBtn.classList.remove('copied');
+    }, 1800);
+  }
+
+  cells.forEach((cell) => {
+    cell.addEventListener('click', (e) => {
+      // clicking the toggle itself flips it — never open the modal from there
+      if ((e.target as HTMLElement).closest('.stage')) return;
+      const action = (e.target as HTMLElement).closest<HTMLElement>('[data-action]');
+      openModal(cell, action?.dataset.action === 'prompt' ? 'prompt' : 'css');
+    });
+    cell.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        openModal(cell);
+      }
+    });
+  });
+
+  copyBtn.addEventListener('click', copyText);
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', (e) => {
+    if (e.target === overlay) closeModal();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !overlay.hasAttribute('hidden')) closeModal();
+  });
+</script>
