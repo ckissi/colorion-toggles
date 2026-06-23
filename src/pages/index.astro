@@ -4,6 +4,23 @@ import Layout from '../layouts/Layout.astro';
 // Each family has a self-contained base (theme tokens defined locally so copied
 // snippets work standalone), then per-item rules layer the variation on top.
 
+// Cross-promo: the other tools in the Colorion network, surfaced in the header
+// dropdown. `?ref=` attributes the referral back to this site.
+const REF = 'toggles.colorion.co';
+const colorionLinks = [
+  { label: 'Colorion', href: 'https://www.colorion.co' },
+  { label: '2 Color Combinations', href: 'https://2colors.colorion.co' },
+  { label: 'Color Palettes', href: 'https://colorpalettes.colorion.co' },
+  { label: 'Palette Generator', href: 'https://palettegenerator.colorion.co' },
+  { label: 'Material Colors', href: 'https://material.colorion.co' },
+  { label: 'Mobile Palette', href: 'https://mobilepalette.colorion.co' },
+  { label: 'Gradients', href: 'https://gradients.colorion.co' },
+  { label: 'Gradient Buttons', href: 'https://gradientbuttons.colorion.co' },
+  { label: 'Animated Buttons', href: 'https://animatedbuttons.colorion.co' },
+  { label: 'CSS Tooltips', href: 'https://csstooltips.colorion.co' },
+  { label: 'CSS Loaders', href: 'https://css-loaders.colorion.co' },
+];
+
 const SWITCH_BASE = `.switch {
   /* Theme tokens — override these to recolour the switch */
   --primary: #F4FF2B;
@@ -280,9 +297,34 @@ Requirements:
       <div class="brand-mark">T</div>
       <span class="mono">CSS Toggle Library</span>
     </div>
-    <div class="header-status mono">
-      <span class="pulse-dot"></span>
-      {items.length} toggles · MIT
+    <div class="header-right">
+      <details class="menu" id="colorion-menu">
+        <summary class="menu-trigger mono">
+          Colorion Tools
+          <span class="menu-caret" aria-hidden="true">▾</span>
+        </summary>
+        <ul class="menu-list">
+          {
+            colorionLinks.map((link) => (
+              <li>
+                <a
+                  class="mono"
+                  href={`${link.href}?ref=${REF}`}
+                  target="_blank"
+                  rel="noopener"
+                  referrerpolicy="no-referrer-when-downgrade"
+                >
+                  {link.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </details>
+      <div class="header-status mono">
+        <span class="pulse-dot"></span>
+        {items.length} toggles · MIT
+      </div>
     </div>
   </header>
 
@@ -334,11 +376,16 @@ Requirements:
   <footer class="site-footer">
     <span class="mono">CSS Toggle Library</span>
     <nav class="footer-links mono">
-      <a href="https://colorion.co?ref=toggles" target="_blank" rel="noopener" referrerpolicy="no-referrer-when-downgrade">Colorion</a>
-      <a href="https://2colors.colorion.co?ref=toggles" target="_blank" rel="noopener" referrerpolicy="no-referrer-when-downgrade">2 Colors</a>
-      <a href="https://animatedbuttons.colorion.co?ref=toggles" target="_blank" rel="noopener" referrerpolicy="no-referrer-when-downgrade">Animated Buttons</a>
+      <a href="https://colorion.co?ref=toggles.colorion.co" target="_blank" rel="noopener" referrerpolicy="no-referrer-when-downgrade">Colorion</a>
+      <a href="https://2colors.colorion.co?ref=toggles.colorion.co" target="_blank" rel="noopener" referrerpolicy="no-referrer-when-downgrade">2 Colors</a>
+      <a href="https://gradientbuttons.colorion.co?ref=toggles.colorion.co" target="_blank" rel="noopener" referrerpolicy="no-referrer-when-downgrade">Gradient Buttons</a>
+      <a href="https://animatedbuttons.colorion.co?ref=toggles.colorion.co" target="_blank" rel="noopener" referrerpolicy="no-referrer-when-downgrade">Animated Buttons</a>
+      <a href="https://github.com/ckissi/colorion-toggles" target="_blank" rel="noopener">GitHub</a>
     </nav>
     <span class="mono">Pure CSS · No dependencies · MIT licensed</span>
+    <a class="footer-badge" href="https://sevalla.com?ref=toggles.colorion.co" target="_blank" rel="noopener">
+      <img src="/hosted-on-sevalla.png" alt="Hosted on Sevalla" width="230" height="73" loading="lazy" />
+    </a>
   </footer>
 
   <!-- Copy-to-clipboard modal -->
@@ -478,4 +525,20 @@ Requirements:
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !overlay.hasAttribute('hidden')) closeModal();
   });
+
+  // ---------- Header dropdown (Colorion tools) ----------
+  // <details> handles open/close natively; this just closes it when the user
+  // clicks away, presses Escape, or picks a destination.
+  const menu = document.getElementById('colorion-menu') as HTMLDetailsElement | null;
+  if (menu) {
+    document.addEventListener('click', (e) => {
+      if (menu.open && !menu.contains(e.target as Node)) menu.open = false;
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menu.open) menu.open = false;
+    });
+    menu.querySelectorAll('a').forEach((a) =>
+      a.addEventListener('click', () => { menu.open = false; })
+    );
+  }
 </script>
