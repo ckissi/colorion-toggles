@@ -291,6 +291,17 @@ h1 em {
   color: color-mix(in srgb, var(--secondary) 70%, var(--surface));
 }
 
+/* The library heading is an <h2> for document outline, but reads as the same
+   inline label it replaced — strip the default heading box/typography. */
+.library-title {
+  margin: 0;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
 /* Flat grid: shared hairline dividers, no gaps, no radius */
 .grid {
   display: grid;
@@ -2238,10 +2249,16 @@ h1 em {
 }
 
 .cell-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* Meet the 48x48 CSS-pixel minimum touch-target size for accessibility. */
+  min-height: 48px;
+  min-width: 48px;
   color: var(--secondary);
   background: var(--primary);
   border: 0;
-  padding: 2px 6px;
+  padding: 2px 12px;
   border-radius: var(--r-control);
   cursor: pointer;
   pointer-events: none;

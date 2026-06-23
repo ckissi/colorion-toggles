@@ -1,0 +1,14 @@
+{
+  "name": "CSS Toggle Library",
+  "short_name": "CSS Toggles",
+  "description": "A library of pure-CSS toggles, switches, checkboxes and radios — no JavaScript, no dependencies.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#E2F1F2",
+  "theme_color": "#0F191E",
+  "icons": [
+    { "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any" },
+    { "src": "/apple-touch-icon.png", "type": "image/png", "sizes": "180x180" }
+  ]
+}

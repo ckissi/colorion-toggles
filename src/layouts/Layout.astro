@@ -7,9 +7,26 @@ interface Props {
 }
 
 const {
-  title = 'CSS Toggle Library — pure-CSS switches, checkboxes & radios, free to copy',
+  title = 'CSS Toggle Library — Pure-CSS Switches & Checkboxes',
   description = 'A library of pure-CSS toggles, switches, checkboxes and radios — no JavaScript, no dependencies. Click any toggle to view and copy its self-contained CSS.',
 } = Astro.props;
+
+// Absolute URLs for canonical + social tags. Falls back gracefully if `site`
+// isn't configured (e.g. during a quick dev run).
+const siteUrl = Astro.site ?? new URL('https://toggles.colorion.co');
+const canonical = new URL(Astro.url.pathname, siteUrl).href;
+const ogImage = new URL('/og-image.png', siteUrl).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'CSS Toggle Library',
+  url: siteUrl.href,
+  description,
+  inLanguage: 'en',
+  license: 'https://opensource.org/licenses/MIT',
+  author: { '@type': 'Person', name: 'Csaba Kissi' },
+};
 ---
 
 <!DOCTYPE html>
@@ -18,7 +35,33 @@ const {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <meta name="robots" content="index,follow" />
     <title>{title}</title>
+    <link rel="canonical" href={canonical} />
+
+    <!-- Favicon + PWA / install metadata -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#0F191E" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CSS Toggle Library" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="CSS Toggle Library — pure-CSS switches, checkboxes and radios" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
 
     <!-- Self-hosted fonts. Preload the above-the-fold weights (Inter 500 powers
          the hero h1 / LCP element; Inter 400 the body copy) so they arrive
@@ -26,6 +69,8 @@ const {
          the inlined global.css. -->
     <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin-500-normal.woff2" crossorigin />
     <link rel="preload" as="font" type="font/woff2" href="/fonts/inter-latin-400-normal.woff2" crossorigin />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </head>
   <body>
     <slot />
