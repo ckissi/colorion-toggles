@@ -68,7 +68,7 @@ This is one of several free tools by [Colorion](https://colorion.co):
 [Palette Generator](https://palettegenerator.colorion.co) ·
 [Gradient Buttons](https://gradientbuttons.colorion.co) ·
 [Animated Buttons](https://animatedbuttons.colorion.co) ·
-[CSS Loaders](https://css-loaders.colorion.co)
+[CSS Loaders](https://cssloaders.colorion.co)
 
 ## License
 
