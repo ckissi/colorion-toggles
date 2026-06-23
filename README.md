@@ -56,6 +56,10 @@ All toggle definitions live in [`src/pages/index.astro`](src/pages/index.astro) 
 2. Click a toggle to flip it, or use the **CSS** / **Prompt** buttons on each cell.
 3. Copy the snippet — it's fully self-contained and ready to paste into your project.
 
+## Hosting
+
+Hosted on [Sevalla](https://sevalla.com).
+
 ## Part of the Colorion network
 
 This is one of several free tools by [Colorion](https://colorion.co):
