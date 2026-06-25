@@ -2252,13 +2252,13 @@ h1 em {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* Meet the 48x48 CSS-pixel minimum touch-target size for accessibility. */
-  min-height: 48px;
-  min-width: 48px;
+  /* Compact pill — sized by padding/font, not a fixed touch-target height. */
+  min-height: 0;
   color: var(--secondary);
   background: var(--primary);
   border: 0;
-  padding: 2px 12px;
+  padding: 4px 12px;
+  font-size: .75rem;
   border-radius: var(--r-control);
   cursor: pointer;
   pointer-events: none;
